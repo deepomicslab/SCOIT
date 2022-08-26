@@ -1,5 +1,5 @@
 # SCOIT
-SCOIT is an implementation of a probabilistic tensor decomposition framework for single-cell multi-omics data integration. SCOIT accepts the input of datasets from multiple omics, with missing values allowed.
+SCOIT is an implementation of a probabilistic tensor decomposition framework for single-cell multiomic data integration. SCOIT accepts the input of datasets from multiple omics, with missing values allowed.
 
 ![image](https://github.com/deepomicslab/SCOIT/blob/main/framework.png)
 
@@ -30,6 +30,7 @@ np.savetxt("local_gene_embeddings.csv", sc_model.G, delimiter = ',') # omics-spe
 # imputation
 imputed_expression_data = predict_data[0]
 imputed_methylation_data = predict_data[1]
+
 ```
 When the features of different omics do not have corresponding information, please use the ```fit_list``` function, which accepts the input as a list of matrices.
 ```Python
