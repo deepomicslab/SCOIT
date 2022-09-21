@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim import SGD, Adam
 from torch.utils.data import Dataset, DataLoader, TensorDataset
-from scot import matrix_model, matrix_model_complete, matrix_list_model, matrix_list_model_complete
+from scoit import matrix_model, matrix_model_complete, matrix_list_model, matrix_list_model_complete
 
 class sc_multi_omics:
     def __init__(self, K1=20, K2=20, K3=20, random_seed=111):
