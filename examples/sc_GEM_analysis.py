@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from scot import sc_multi_omics
+from scoit import sc_multi_omics
 import time
 
 def load_data():
