@@ -61,24 +61,60 @@ predict_data = sc_model.fit_list_complete(data)
 
 ## Parameters
 ###  ```sc_multi_omics```
-> + ```K1```: The local element-wise product parameter, see the manuscript for details (default=20).
-> + ```K2```: The local element-wise product parameter (default=20).
-> + ```K3```: The local element-wise product parameter (default=20).
-> + ```random_seed```: The random seed used in optimization (default=111).
+> + ```K1```: The local element-wise product parameter, see the manuscript for details (default=30).
+> + ```K2```: The local element-wise product parameter (default=30).
+> + ```K3```: The local element-wise product parameter (default=30).
+> + ```random_seed```: The random seed used in optimization (default=123).
 
 ###  ```fit```
+> + ```normalization```: Whether to applied min-max normalization (default=True).
+> + ```pre_impute```: Whether to applied KNNImputer for pre-processing (default=False).
 > + ```opt```: The optimization algorithm for gradient descent, including SGD, Adam, Adadelta, Adagrad, AdamW, SparseAdam, Adamax, ASGD, LBFGS (default="Adam").
 > + ```dist```:The distribution used for modeling, including gaussian, poisson, negative_bionomial (default="gaussian").
 > + ```lr```: The learning rate for gradient descent (default=1e-2).
 > + ```n_epochs```: The number of optimization epochs (default=1000).
-> + ```lambda_C_regularizer```: The coefficient for the penalty term of global cell embeddings (default=0.01).
-> + ```lambda_G_regularizer```: The coefficient for the penalty term of global gene embeddings (default=0.01).
-> + ```lambda_O_regularizer```: The coefficient list for the penalty term of global omics embeddings; the length of the list should be the same with the number of omics (default=[0.01, 0.01]).
-> + ```lambda_OC_regularizer```: The coefficient list for the penalty term of omics-specific cell embeddings; the length of the list should be the same with the number of omics, not avaiable for complete functions (default=[1, 1]).
-> + ```lambda_OG_regularizer```: The coefficient list for the penalty term of omics-specific gene embeddings, the length of the list should be the same with the number of omics, not avaiable for list functions (default=[1, 1]).
-> + ```batch_size```: The batch size used for gradient descent, not avaiable for complete functions (default=1000).
+> + ```lambda_C_regularizer```: The coefficient for the penalty term of global cell embeddings (default=0, indicating automatically adjust.).
+> + ```lambda_G_regularizer```: The coefficient for the penalty term of global gene embeddings (default=0).
+> + ```lambda_O_regularizer```: The coefficient list for the penalty term of global omics embeddings; the length of the list should be the same with the number of omics (default=[0, 0]).
+> + ```lambda_OC_regularizer```: The coefficient list for the penalty term of omics-specific cell embeddings; the length of the list should be the same with the number of omics, not avaiable for complete functions (default=[0, 0]).
+> + ```lambda_OG_regularizer```: The coefficient list for the penalty term of omics-specific gene embeddings, the length of the list should be the same with the number of omics, not avaiable for list functions (default=[0, 0]).
+> + ```batch_size```: The batch size used for gradient descent, not avaiable for complete functions (default=256).
 > + ```device```: CPU or GPU (default='cuda' if torch.cuda.is_available() else 'cpu').
 > + ```verbose```: Whether to print loss for each epoch (default=True).
+
+###  ```cell_analysis```
+#### ```knn_adj_matrix```
+Construct KNN graph with the cell embeddings.
+> + ```k```: The number of neighbos used to construct KNN graph (default=20).
+#### ```snn_adj_matrix```
+Construct SNN graph with the cell embeddings.
+> + ```k```: The number of neighbos used to construct SNN graph (default=20).
+#### ```jsnn_adj_matrix```
+Construct jSNN graph with the cell embeddings.
+> + ```k```: The number of neighbos used to construct jaccard SNN graph (default=20).
+> + ```prune```: Set the score below the value to zero (default=1/15).
+#### ```RunLouvain```
+Run Louvain algorithm for the graph.
+> + ```k```: Terminate the search once this number of communities is detected (default=None).
+#### ```RunSpectral```
+Run Spectral clustering algorithm for the graph.
+> + ```k```: Number of clusters (default=5).
+#### ```RunLeiden```
+Run Leiden algorithm for the graph.
+
+###  ```gene_analysis```
+#### ```pearson_correlation```
+Calculate the correlation between the features.
+#### ```feature_projection```
+Project the feature embedding to cell embeddings and visualize with UMAP.
+> + ```umap_epochs```: The number of UMAP epochs for visualization (default=100).
+> + ```dimension```: The dimension of the embeddings to use (default=30).
+> + ```figure_name```: The saved figure name (default="feature_projections.png").
+
+
+### Version history
++ `v0.1.1`: Automatically adjusts the coefficients; Add downstream analyses; Extend to unpaired data;
++ `v0.0.1`: Initial version.
 
 ### Maintainer
 WANG Ruohan ruohawang2-c@my.cityu.edu.hk

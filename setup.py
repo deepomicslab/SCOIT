@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='SCOIT',
-    version='0.0.1',
+    version='0.1.1',
     packages=setuptools.find_packages(),
     url='https://github.com/deepomicslab/SCOIT',
     license='MIT',
