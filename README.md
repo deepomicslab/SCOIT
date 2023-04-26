@@ -7,6 +7,10 @@ SCOIT is an implementation of a probabilistic tensor decomposition framework for
 
 ## Prerequisite
 + numpy
++ scipy
++ sklearn
++ communities
++ igraph
 + pytorch 1.9.0
 
 ## Install
