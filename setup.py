@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='SCOIT',
-    version='0.1.1',
+    version='0.1.2',
     packages=setuptools.find_packages(),
     url='https://github.com/deepomicslab/SCOIT',
     license='MIT',
@@ -15,7 +15,7 @@ setup(
     description='SCOIT is an implementation of a probabilistic tensor decomposition framework for single-cell multi-omics data integration.',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=['numpy', 'torch==1.9.0'],
+    install_requires=['numpy', 'torch==1.9.0', 'scipy==1.6.0', 'sklearn==0.24.2'],
     classifiers=[
         "Programming Language :: Python :: 3",
 		"License :: OSI Approved :: MIT License",

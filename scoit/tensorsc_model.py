@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim import SGD, Adam
 from torch.utils.data import Dataset, DataLoader, TensorDataset
+from scipy import stats
 from scoit import matrix_model, matrix_model_complete, matrix_list_model, matrix_list_model_complete
 
 def min_max_normalization(data, zero_impute=True):
@@ -41,9 +42,9 @@ def min_max_normalization(data, zero_impute=True):
             omics_data = (omics_data - min_) / (max_ - min_) + 0.1
         
             new_data.append(np.array(omics_data))
-            omics_min.append([min_])
-            omics_max.append([max_])
-
+            omics_min.append(np.array([min_]))
+            omics_max.append(np.array([max_]))
+    
     return new_data, omics_min, omics_max
 
 
@@ -61,12 +62,39 @@ class sc_multi_omics:
             choose_col = (~np.isnan(data[0]).any(axis=0)) & (~np.isnan(data[1]).any(axis=0))
             for i in range(2, data.shape[0]):
                 choose_col = choose_col & (~np.isnan(data[i]).any(axis=0))
+            print("There is %s shared feautures detected in the dataset."%np.sum(choose_col))
             if (np.sum(choose_col)) == 0:
-                print("There is no overlapping genes detected in the dataset.")
+                print("There is no shared feature detected in the dataset.")
                 pearsonr = 0
             else:
-                pearsonr = np.min(np.corrcoef(data[:, :, choose_col].reshape((data.shape[0], -1))))
-        return abs(pearsonr)
+                choose_data = data[:, :, choose_col]
+                pearsonr_list = []
+                for i in range(choose_data.shape[2]):
+                    pearsonr_list.append(np.min(np.corrcoef(choose_data[:, :, i])))
+
+                np.random.seed(self.random_seed)
+                np.random.shuffle(choose_data[0])
+                pearsonr_list_random = []
+                for i in range(choose_data.shape[2]):
+                    pearsonr_list_random.append(np.min(np.corrcoef(choose_data[:, :, i])))
+
+                pearsonr_list_ = []
+                pearsonr_list_random_ = []
+                for i in range(len(pearsonr_list)):
+                    if not (np.isnan(pearsonr_list[i]) or np.isnan(pearsonr_list_random[i])):
+                        pearsonr_list_.append(abs(pearsonr_list[i]))
+                        pearsonr_list_random_.append(abs(pearsonr_list_random[i]))
+
+                if len(pearsonr_list_) != 0:
+                    pearsonr_median = np.median(pearsonr_list_)
+                    pvalue = stats.ttest_ind(pearsonr_list_, pearsonr_list_random_, equal_var=False, alternative='greater').pvalue
+                else:
+                    pearsonr_median = 0
+                    pvalue = 1
+
+        print("The median pearsonr is %s; The P-value is %s." % (pearsonr_median, pvalue))
+
+        return pearsonr_median, pvalue
 
     def KNN_impute(self, matrix):
         data = np.hstack((matrix))
@@ -88,15 +116,16 @@ class sc_multi_omics:
         # tune the coefficient
         if (lambda_C_regularizer==0) or (lambda_G_regularizer==0) or (0 in lambda_O_regularizer) or (0 in lambda_OC_regularizer) or (0 in lambda_OG_regularizer):
             print("Automatically tune the coefficients for the penalty terms.")
-            if self.cal_corr(matrix) > 0.4:
-                print("High correlation between the omics detected.")
+            pearsonr_median, pvalue = self.cal_corr(matrix)
+            if pearsonr_median > 0.7 and pvalue < 0.05:
+                print("Correlation between the omics detected.")
                 lambda_C_regularizer = 0.01
                 lambda_G_regularizer = 0.01
                 lambda_O_regularizer = [0.01] * matrix.shape[0]
                 lambda_OC_regularizer = [1] * matrix.shape[0]
                 lambda_OG_regularizer = [1] * matrix.shape[0]
             else:
-                print("Low correlation between the omics detected.")
+                print("No correlation between the omics detected.")
                 lambda_C_regularizer = 0.01
                 lambda_G_regularizer = 1
                 lambda_O_regularizer = [1] * matrix.shape[0]
@@ -180,15 +209,16 @@ class sc_multi_omics:
         # tune the coefficent
         if (lambda_C_regularizer==0) or (lambda_G_regularizer==0) or (0 in lambda_O_regularizer) or (0 in lambda_OC_regularizer) or (0 in lambda_OG_regularizer):
             print("Automatically tune the coefficients for the penalty terms.")
-            if np.min(self.cal_corr(matrix)) > 0.4:
-                print("High correlation between the omics detected.")
+            pearsonr_median, pvalue = self.cal_corr(matrix)
+            if pearsonr_median > 0.7 and pvalue < 0.05:
+                print("Correlation between the omics detected.")
                 lambda_C_regularizer = 0.01
                 lambda_G_regularizer = 0.01
                 lambda_O_regularizer = [0.01] * matrix.shape[0]
                 lambda_OC_regularizer = [1] * matrix.shape[0]
                 lambda_OG_regularizer = [1] * matrix.shape[0]
             else:
-                print("Low correlation between the omics detected.")
+                print("No correlation between the omics detected.")
                 lambda_C_regularizer = 0.01
                 lambda_G_regularizer = 1
                 lambda_O_regularizer = [1] * matrix.shape[0]
@@ -322,7 +352,7 @@ class sc_multi_omics:
             matrix_list_hat = [np.exp(matrix_list_hat[i]) for i in range(self.L)]
         
         if normalization:
-            matrix_list_hat = matrix_list_hat - 0.1
+            matrix_list_hat = [matrix_list_hat[i] - 0.1 for i in range(self.L)]
             for i in range(len(matrix_list_hat)):
                 if np.isnan(omics_max[i]).any() or np.isnan(omics_min[i]).any():
                     imputer = KNNImputer()
@@ -387,7 +417,7 @@ class sc_multi_omics:
             matrix_list_hat = [np.exp(matrix_list_hat[i]) for i in range(self.L)]
         
         if normalization:
-            matrix_list_hat = matrix_list_hat - 0.1
+            matrix_list_hat = [matrix_list_hat[i] - 0.1 for i in range(self.L)]
             for i in range(len(matrix_list_hat)):
                 if np.isnan(omics_max[i]).any() or np.isnan(omics_min[i]).any():
                     imputer = KNNImputer()

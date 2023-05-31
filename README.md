@@ -7,7 +7,7 @@ SCOIT is an implementation of a probabilistic tensor decomposition framework for
 
 ## Prerequisite
 + numpy
-+ scipy
++ scipy 1.6.0
 + sklearn
 + communities
 + igraph
@@ -118,7 +118,8 @@ Project the feature embedding to cell embeddings and visualize with UMAP.
 
 
 ### Version history
-+ `v0.1.1`: Automatically adjusts the coefficients; Add downstream analyses; Extend to unpaired data;
++ `v0.1.2`: Adjust correlation calculation.
++ `v0.1.1`: Automatically adjusts the coefficients; Add downstream analyses; Extend to unpaired data.
 + `v0.0.1`: Initial version.
 
 ### Maintainer
