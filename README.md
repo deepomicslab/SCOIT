@@ -118,6 +118,7 @@ Project the feature embedding to cell embeddings and visualize with UMAP.
 
 
 ### Version history
++ `v0.1.2.1`: Manuscript version.
 + `v0.1.2`: Adjust correlation calculation.
 + `v0.1.1`: Automatically adjusts the coefficients; Add downstream analyses; Extend to unpaired data.
 + `v0.0.1`: Initial version.
@@ -125,4 +126,18 @@ Project the feature embedding to cell embeddings and visualize with UMAP.
 ### Maintainer
 WANG Ruohan ruohawang2-c@my.cityu.edu.hk
 
-
+### Reference
+```
+@article{10.1093/nar/gkad570,
+    author = {Wang, Ruo Han and Wang, Jianping and Li, Shuai Cheng},
+    title = "{Probabilistic tensor decomposition extracts better latent embeddings from single-cell multiomic data}",
+    journal = {Nucleic Acids Research},
+    pages = {gkad570},
+    year = {2023},
+    month = {07},
+    issn = {0305-1048},
+    doi = {10.1093/nar/gkad570},
+    url = {https://doi.org/10.1093/nar/gkad570},
+    eprint = {https://academic.oup.com/nar/advance-article-pdf/doi/10.1093/nar/gkad570/50819911/gkad570.pdf},
+}
+```
