@@ -20,7 +20,7 @@ pip install SCOIT
 ```
 
 ## Examples
-We put the complete scripts for the analysis described in the manuscript under ```examples/``` directory for detailed usage examples and reproduction. The example data can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1F_WBwNsHggjTqgFfTm6IugNKpb0xJTje?usp=sharing).
+We put the complete scripts for the analysis described in the manuscript under ```examples/``` directory for detailed usage examples and reproduction. The example data can be downloaded from [Zenodo](https://zenodo.org/records/7886413).
 
 This is an example of multiple datasets when features have corresponding information.
 
